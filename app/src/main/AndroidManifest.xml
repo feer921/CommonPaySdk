@@ -22,7 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".WithFragmentActivity"
+            android:screenOrientation="portrait"
+            />
         <!-- 别忘记注册自己写的WxPayEntryActivity-->
         <activity
             android:name=".wxapi.WXPayEntryActivity"

@@ -115,7 +115,7 @@ public class MainActivity extends BaseActivity
             PayEntryActivity.startPayActivity(this, alipayOrderInfo, TEST_REQUEST_PAY_CODE, WXPayEntryActivity.class);
 
         } else if (id == R.id.nav_slideshow) {
-
+            jumpToActivity(WithFragmentActivity.class);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

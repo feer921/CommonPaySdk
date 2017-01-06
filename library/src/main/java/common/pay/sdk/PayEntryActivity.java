@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v4.app.Fragment;
+
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
@@ -55,9 +57,18 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
      * @param localWxPayEntryActivityClass 即你的APP内的wxapi包下建立的WxPayEntryActivity(该类你什么也不用写就继承PayEntryActivity就行)
      */
     public static void startPayActivity(Activity startActivity, ICanPayOrderInfo curPrePayOrderInfo, int requestCode, Class<? extends PayEntryActivity> localWxPayEntryActivityClass) {
-        Intent startInten = new Intent(startActivity, localWxPayEntryActivityClass);
-        startInten.putExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO, curPrePayOrderInfo);
-        startActivity.startActivityForResult(startInten, requestCode);
+        Intent startIntent = new Intent(startActivity, localWxPayEntryActivityClass);
+        startIntent.putExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO, curPrePayOrderInfo);
+        startActivity.startActivityForResult(startIntent, requestCode);
+    }
+
+    public static void startPayActivity(Fragment fragment, ICanPayOrderInfo curPrePayOrderInfo, int requestCode, Class<? extends PayEntryActivity> localWxPayEntryActivityClass) {
+        if (fragment == null) {
+            return;
+        }
+        Intent startIntent = new Intent(fragment.getContext(), localWxPayEntryActivityClass);
+        startIntent.putExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO, curPrePayOrderInfo);
+        fragment.startActivityForResult(startIntent, requestCode);
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
