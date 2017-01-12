@@ -1,19 +1,23 @@
 package common.pay.sdk;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+
 import common.pay.sdk.utils.AlipayTaskRunner;
 import common.pay.sdk.utils.CommonPaySdk;
+
 import static common.pay.sdk.CommonPayConfig.REQ_PAY_RESULT_CODE_ERROR;
 
 /**
@@ -61,7 +65,13 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
         startIntent.putExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO, curPrePayOrderInfo);
         startActivity.startActivityForResult(startIntent, requestCode);
     }
-
+    /**
+     * 该方法供在Fragment界面里跳转支付的情况，这样就能直接在Fragment的onActivityResult()方法中直接拿到支付结果并处理了
+     * @param fragment 当前碎片界面
+     * @param curPrePayOrderInfo 当前服务器返回的支付请求信息数据对象
+     * @param requestCode 区分请求的请求码
+     * @param localWxPayEntryActivityClass 即你的APP内的wxapi包下建立的WxPayEntryActivity
+     */
     public static void startPayActivity(Fragment fragment, ICanPayOrderInfo curPrePayOrderInfo, int requestCode, Class<? extends PayEntryActivity> localWxPayEntryActivityClass) {
         if (fragment == null) {
             return;
@@ -69,6 +79,47 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
         Intent startIntent = new Intent(fragment.getContext(), localWxPayEntryActivityClass);
         startIntent.putExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO, curPrePayOrderInfo);
         fragment.startActivityForResult(startIntent, requestCode);
+    }
+    /**
+     * 为了解除微信支付SDK限制死集成微信支付的APP内一定要在包名内下建立一个wxapi包再在该包下建立WxPayEntryActivity类才能正常回调出响应
+     * 所以本库改为此方法来调起支付
+     * @param startActivity 发起支付的当前Activity
+     * @param curPrePayOrderInfo 当前服务器返回的支付请求信息数据对象
+     * @param requestCode 区分请求的请求码
+     * 目前仅测试功能
+     */
+    public static void startPayActivity(Activity startActivity, ICanPayOrderInfo curPrePayOrderInfo, int requestCode,String testNull) {
+        Intent startIntent = getCanHoldWxPayActivityClassIntent(startActivity.getApplicationContext(), curPrePayOrderInfo);
+        startActivity.startActivityForResult(startIntent, requestCode);
+    }
+    private static Intent getCanHoldWxPayActivityClassIntent(Context packageContext,ICanPayOrderInfo curPrePayOrderInfo) {
+        Intent startIntent = new Intent();
+        Class wxPayEntryClass = null;
+        //第一步，主动寻找当前的APP下是否有WxPayEntryActivity类
+        try {
+            wxPayEntryClass = Class.forName(packageContext.getPackageName() + ".wxapi.WxPayEntryActivity");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("你必须在你所打包的包名目录下放上wxapi目录，并且在wxapi目录下要写上WxPayEntryActivity类文件");
+        }
+        boolean canGoOnInvoke = false;
+        //第二步，判断WxPayEntryActivity是否继承了本库的PayEntryActivity类
+        if (wxPayEntryClass != null) {
+            Class superClass = wxPayEntryClass.getSuperclass();
+            if (superClass != null) {
+                String superClassName = superClass.getName();
+                Log.e("info", "PayEntryActivity--> superClassName = " + superClassName);
+                if (superClassName.equals(PayEntryActivity.class.getName())) {
+                    canGoOnInvoke = true;
+                }
+            }
+        }
+        if (!canGoOnInvoke) {
+            throw new IllegalArgumentException("注意你所写的WxPayEntryActivity需要继承PayEntryActivity类才可以");
+        }
+        startIntent.setClass(packageContext, wxPayEntryClass);
+        startIntent.putExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO, curPrePayOrderInfo);
+        return startIntent;
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,19 +150,25 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * 子类可重写此方法用来提供自己喜欢的过度界面
+     * @return
+     */
     @Override
     protected int getProvideContentViewResID() {
         return R.layout.def_pay_activity_layout;
     }
 
+    /**
+     * 子类可重写此方法用来初始化你自己提供的布局中的视图Views
+     */
     @Override
     protected void initViews() {
         //init the views
-        // TODO: 2016/11/1  do something
     }
 
     @Override
-    protected void initData() {
+    protected final void initData() {
         super.initData();
         uiHintAgent.toggleHintDialogCancelable(false);
         if (curPayOrderInfo != null) {
@@ -147,7 +204,7 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
      * @param intent
      */
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected final void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         uiHintAgent.setOwnerVisibility(true);
         setIntent(intent);
@@ -178,7 +235,7 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
      * @param resp
      */
     @Override
-    public void onResp(BaseResp resp) {
+    public final void onResp(BaseResp resp) {
 //        isWxPayEventResponced = true;
         i(null, "-->onResp() errCode = " + resp.errCode + " error info: " + resp.errStr);
         int respType = resp.getType();
@@ -213,7 +270,7 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
 
     /**
      * 开始去发起支付，显示Loading,
-     * 如果你不喜欢本库中默认的LoadingUI效果，可继承本通用类，自己重写这些方法
+     * 子类可重写此方法，用来根据你自己的布局视图提供你喜欢的开始支付的UI效果，比如开始有一个什么动画之类的
      * @param hintMsg
      */
     protected void startToPay(String hintMsg) {
