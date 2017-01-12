@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
@@ -31,11 +30,7 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
      * 当前能被支付的预付订单信息
      */
     private ICanPayOrderInfo curPayOrderInfo;
-    /**
-     * 是否微信支付事件响应过，该变量为解决微信版本6.3以前的一个坑
-     * deleted it by fee 2017-01-04,不需要该变量来解决微信支付SDK不响应的坑
-     */
-//    private boolean isWxPayEventResponced = false;
+
     private boolean isAliPayOrder,isWxPayOrder;
     protected CommonPaySdk paySdk;
 
@@ -88,36 +83,21 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
      * @param requestCode 区分请求的请求码
      * 目前仅测试功能
      */
-    private static void startPayActivity(Activity startActivity, ICanPayOrderInfo curPrePayOrderInfo, int requestCode,String testNull) {
+    public static void startPayActivity(Activity startActivity, ICanPayOrderInfo curPrePayOrderInfo, int requestCode,String testNull) {
         Intent startIntent = getCanHoldWxPayActivityClassIntent(startActivity.getApplicationContext(), curPrePayOrderInfo);
         startActivity.startActivityForResult(startIntent, requestCode);
     }
+
+    public static void startPayActivity(Fragment curFragment, ICanPayOrderInfo curPrePayOrderInfo, int requestCode) {
+        Intent startIntent = getCanHoldWxPayActivityClassIntent(curFragment.getContext(), curPrePayOrderInfo);
+        curFragment.startActivityForResult(startIntent, requestCode);
+    }
     private static Intent getCanHoldWxPayActivityClassIntent(Context packageContext,ICanPayOrderInfo curPrePayOrderInfo) {
         Intent startIntent = new Intent();
-        Class wxPayEntryClass = null;
-        //第一步，主动寻找当前的APP下是否有WxPayEntryActivity类
-        try {
-            wxPayEntryClass = Class.forName(packageContext.getPackageName() + ".wxapi.WxPayEntryActivity");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException("你必须在你所打包的包名目录下放上wxapi目录，并且在wxapi目录下要写上WxPayEntryActivity类文件");
-        }
-        boolean canGoOnInvoke = false;
-        //第二步，判断WxPayEntryActivity是否继承了本库的PayEntryActivity类
-        if (wxPayEntryClass != null) {
-            Class superClass = wxPayEntryClass.getSuperclass();
-            if (superClass != null) {
-                String superClassName = superClass.getName();
-                Log.e("info", "PayEntryActivity--> superClassName = " + superClassName);
-                if (superClassName.equals(PayEntryActivity.class.getName())) {
-                    canGoOnInvoke = true;
-                }
-            }
-        }
-        if (!canGoOnInvoke) {
-            throw new IllegalArgumentException("注意你所写的WxPayEntryActivity需要继承PayEntryActivity类才可以");
-        }
-        startIntent.setClass(packageContext, wxPayEntryClass);
+        String curPackageName = packageContext.getPackageName();
+        //采用这种方式的话，就不需要使用者直接传入自己写的WxPayEntryActivity.class参数了，只要在对应的打包包名下的【wxapi】目录下有写这样一个
+        //类并且该WxPayEntryActivity继承PayEntryActivity，并且在AndroidMenifest中有注册就行了
+        startIntent.setClassName(packageContext, curPackageName + ".wxapi.WXPayEntryActivity");
         startIntent.putExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO, curPrePayOrderInfo);
         return startIntent;
     }
