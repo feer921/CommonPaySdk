@@ -43,7 +43,10 @@ public class CommonPaySdk {
         return iwxapi.sendReq(curPayReq);
     }
 
-    private IWXAPI getIwxapi() {
+    public IWXAPI getIwxapi() {
+        if (iwxapi == null) {
+            initWxPayModes();
+        }
         return iwxapi;
     }
 
