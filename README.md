@@ -351,21 +351,21 @@ API方法在【PayEntryActivity】中，为全局静态方法，有三种方式�
 ### 4、可自定义调起支付时的过度界面
 虽然使用本库时，你需要写一个【WxPayEntryActivity】并且继承本库的【PayEntryActivity】，就能发起支付了，但本库的【PayEntryActivity】里面的一些等待支付结果时过度界面使用了默认的一套UI，可能对于一些APP来说，不太美观，所以其实在你写的【WxPayEntryActivity】中重写父类的一些方法来自定义你喜欢的过度界面，比如可重写父类【PayEntryActivity】中的
 
-/**
+> /**
+> *子类可重写此方法用来提供自己喜欢的过度界面
+> 
+> *@return
+> 
+> */
+> 
+> @Override
+> 
+> protected int getProvideContentViewResID() {
+> 
+> return R.layout.def_pay_activity_layout;
+> 
+> }
 
-*子类可重写此方法用来提供自己喜欢的过度界面
-
-*@return
-
-*/
-
-@Override
-
-protected int getProvideContentViewResID() {
-
-return R.layout.def_pay_activity_layout;
-
-}
 等其他你认为需要优化UI的细节。
 
 ### 5、接收微信/支付宝的支付结果
@@ -446,7 +446,7 @@ return R.layout.def_pay_activity_layout;
 ### 6、打包测试
 由于微信支付SDK要能真正输入密码并付款，需要你的APP用正式签名文件进行打包才能使用，而打正式包并且安装到手机上这挺费事的，那么可以直接通过AndroidStudio运行(debug模式)到手机上来作正式测试，就是让Android Studio跑debug模式时也指定签名配置为使用正式的签名文件来打包，教程可网上搜索或者参考:
 
-Android Studio配置正式签名和debug签名
+[Android Studio配置正式签名和debug签名](http://www.jianshu.com/p/3755c1ad3083)
 
 
 

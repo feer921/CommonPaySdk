@@ -88,7 +88,7 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
      * @param requestCode 区分请求的请求码
      * 目前仅测试功能
      */
-    public static void startPayActivity(Activity startActivity, ICanPayOrderInfo curPrePayOrderInfo, int requestCode,String testNull) {
+    private static void startPayActivity(Activity startActivity, ICanPayOrderInfo curPrePayOrderInfo, int requestCode,String testNull) {
         Intent startIntent = getCanHoldWxPayActivityClassIntent(startActivity.getApplicationContext(), curPrePayOrderInfo);
         startActivity.startActivityForResult(startIntent, requestCode);
     }
