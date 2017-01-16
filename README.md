@@ -26,7 +26,7 @@
 > 
 > ...
 > 
-> compile'com.github.feer921:CommonPaySdk:1.1'//目录为1.1版本
+> compile'com.github.feer921:CommonPaySdk:1.1'//目录为1.1版本,具体版本可参考realse的版本
 > 
 > }
 
@@ -303,7 +303,7 @@ API方法在【PayEntryActivity】中，为全局静态方法，有三种方式�
 > 
 > */
 > 
-> public static void **startPayActivity(Activity startActivity, ICanPayOrderInfo curPrePayOrderInfo, int requestCode, Class<? extends PayEntryActivitylocalWxPayEntryActivityClass)** {
+> public static void **startPayActivity(Activity startActivity, ICanPayOrderInfo curPrePayOrderInfo, int requestCode, Class<? extends PayEntryActivity> localWxPayEntryActivityClass)** {
 > 
 > Intent startIntent = new Intent(startActivity, localWxPayEntryActivityClass);
 > 
@@ -330,7 +330,7 @@ API方法在【PayEntryActivity】中，为全局静态方法，有三种方式�
 > 
 > */
 > 
-> public static void ***startPayActivity(Fragment fragment, ICanPayOrderInfo curPrePayOrderInfo, int requestCode, Class<? extends PayEntryActivitylocalWxPayEntryActivityClass)***{
+> public static void ***startPayActivity(Fragment fragment, ICanPayOrderInfo curPrePayOrderInfo, int requestCode, Class<? extends PayEntryActivity> localWxPayEntryActivityClass)***{
 > 
 > if (fragment == null) {
 > 
