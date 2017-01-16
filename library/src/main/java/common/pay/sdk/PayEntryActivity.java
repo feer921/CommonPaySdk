@@ -79,6 +79,7 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
      * 为了解除微信支付SDK限制死集成微信支付的APP内一定要在包名内下建立一个wxapi包再在该包下建立WxPayEntryActivity类才能正常回调出响应
      * 所以本库改为此方法来调起支付
      * 该方法不需要传入自己写的WxPayEntryActivity.class参数，方法内会去当前所打包的包下寻找WxPayEntryActivity类,所以更简洁
+     * 但是可能兼容性有问题，有些系统可能会报找不到WxPayEntryActivity类的错误，如果发生这样的错误，请换上面两个调用方式。
      * @param startActivity 发起支付的当前Activity
      * @param curPrePayOrderInfo 当前服务器返回的支付请求信息数据对象
      * @param requestCode 区分请求的请求码
@@ -88,6 +89,12 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
         startActivity.startActivityForResult(startIntent, requestCode);
     }
 
+    /**
+     * 但是可能兼容性有问题，有些系统可能会报找不到WxPayEntryActivity类的错误，如果发生这样的错误，请换上面两个调用方式。
+     * @param curFragment
+     * @param curPrePayOrderInfo
+     * @param requestCode
+     */
     public static void startPayActivity(Fragment curFragment, ICanPayOrderInfo curPrePayOrderInfo, int requestCode) {
         Intent startIntent = getCanHoldWxPayActivityClassIntent(curFragment.getContext(), curPrePayOrderInfo);
         curFragment.startActivityForResult(startIntent, requestCode);
