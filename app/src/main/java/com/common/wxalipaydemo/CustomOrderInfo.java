@@ -1,6 +1,7 @@
 package com.common.wxalipaydemo;
 
-import com.tencent.mm.sdk.modelpay.PayReq;
+
+import com.tencent.mm.opensdk.modelpay.PayReq;
 
 import org.json.JSONException;
 import org.json.JSONObject;

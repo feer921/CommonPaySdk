@@ -4,17 +4,18 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.tencent.mm.sdk.constants.ConstantsAPI;
-import com.tencent.mm.sdk.modelbase.BaseReq;
-import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.modelmsg.SendAuth;
-import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
+import com.tencent.mm.opensdk.modelbase.BaseReq;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+
 
 /**
  * User: fee(1176610771@qq.com)
  * Date: 2016-07-05
  * Time: 13:49
- * DESC: 微信分享需要接收结果的界面
+ * DESC: 微信分享/登陆等需要接收结果的界面
  */
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     @Override

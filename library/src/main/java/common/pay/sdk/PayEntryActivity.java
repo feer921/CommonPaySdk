@@ -7,16 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-
-import com.tencent.mm.sdk.constants.ConstantsAPI;
-import com.tencent.mm.sdk.modelbase.BaseReq;
-import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.modelpay.PayReq;
-import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
-
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
+import com.tencent.mm.opensdk.modelbase.BaseReq;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import common.pay.sdk.utils.AlipayTaskRunner;
 import common.pay.sdk.utils.CommonPaySdk;
-
 import static common.pay.sdk.CommonPayConfig.REQ_PAY_RESULT_CODE_ERROR;
 
 /**
@@ -113,7 +110,8 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
     protected void onCreate(Bundle savedInstanceState) {
         LIFE_CIRCLE_DEBUG = true;
         Intent startIntent = getIntent();
-        paySdk = new CommonPaySdk(this);
+//        paySdk = new CommonPaySdk(this);
+        paySdk = CommonPaySdk.getMe().withContext(this);
         if (startIntent.hasExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO)) {
             curPayOrderInfo = (ICanPayOrderInfo) startIntent.getSerializableExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO);
             if (curPayOrderInfo != null) {

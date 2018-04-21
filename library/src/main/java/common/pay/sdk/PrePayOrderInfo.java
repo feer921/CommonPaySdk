@@ -1,6 +1,7 @@
 package common.pay.sdk;
 
-import com.tencent.mm.sdk.modelpay.PayReq;
+
+import com.tencent.mm.opensdk.modelpay.PayReq;
 
 import common.pay.sdk.utils.Util;
 
