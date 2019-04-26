@@ -372,7 +372,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     protected void sweetDialogHint(String titleInfo, String hintInfo, String cancelInfo, String comfimInfo, int curDialogInCase,int sweetDialogContentCase) {
-        uiHintAgent.sweetDialogHint(titleInfo, hintInfo, cancelInfo, comfimInfo, curDialogInCase, sweetDialogContentCase);
+//        uiHintAgent.sweetDialogHint(titleInfo, hintInfo, cancelInfo, comfimInfo, curDialogInCase, sweetDialogContentCase);
     }
 
     protected void sweetDialogHintSuc(String successInfo, String commitInfo, int curDialogInCase) {
