@@ -16,5 +16,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="@string/action_settings"
+        android:textColor="#f00"
+        android:textSize="21sp"
+        app:fontName = "@string/action_settings"
+        />
 </RelativeLayout>

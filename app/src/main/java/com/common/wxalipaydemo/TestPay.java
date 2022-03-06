@@ -1,7 +1,9 @@
 package com.common.wxalipaydemo;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
+
+import androidx.fragment.app.Fragment;
+
 import com.common.wxalipaydemo.wxapi.WXPayEntryActivity;
 import common.pay.sdk.PayEntryActivity;
 import common.pay.sdk.PrePayOrderInfo;

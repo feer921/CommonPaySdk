@@ -1,15 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion compileSdkVer
     
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 21
         targetSdkVersion 25 // >23 宿主APP需要动态申请相关权限
-        versionCode 1
-        versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
     buildTypes {
@@ -21,27 +19,28 @@ android {
     repositories {
 
         // 添加下面的内容
-        flatDir {
-            dirs 'libs'
-        }
+//        flatDir {
+//            dirs 'libs'
+//        }
 
         // ... jcenter() 等其他仓库
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
 //    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2' {
 //        exclude group: 'com.android.support', module: 'support-annotations'
 //    })
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation(name: 'alipaySdk-15.6.2', ext: 'aar')
+//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+//    implementation(name: 'alipaySdk-15.6.2', ext: 'aar')
 //    implementation files('libs/alipaySdk-20161009.jar') removed by fee 2019-04-24: 更新支付宝SDK
 //    compile files('libs/libammsdk.jar')//
-    api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'//changed to without mta
+    api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+    implementation 'androidx.appcompat:appcompat:1.4.1'//changed to without mta
 //    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
+    implementation  "androidx.activity:activity:1.4.0"
 //    implementation 'cn.pedant.sweetalert:library:1.3'//参见:https://github.com/pedant/sweet-alert-dialog
 }
 
@@ -58,20 +57,20 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
 }
 
-task javadoc(type: Javadoc) {
-    failOnError  false
-    source = android.sourceSets.main.java.sourceFiles
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.compile
-}
+//task javadoc(type: Javadoc) {
+//    failOnError  false
+//    source = android.sourceSets.main.java.sourceFiles
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//    classpath += configurations.compile
+//}
 
 // 制作文档(Javadoc)
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
 
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
+//artifacts {
+//    archives sourcesJar
+//    archives javadocJar
+//}

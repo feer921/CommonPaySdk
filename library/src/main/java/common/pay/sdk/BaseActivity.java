@@ -7,10 +7,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 import common.pay.sdk.utils.IProxyCallback;
 import common.pay.sdk.utils.UIHintAgent;
 import common.pay.sdk.utils.Util;
@@ -153,32 +152,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             overridePendingTransition(R.anim.common_whole_right_in, R.anim.common_part_right_out);
         }
     }
-    /**
-     * 从xml文件中找到一个Viwe控件的通配方法，将使用方需要的强制转换通用实现
-     * @param viewId
-     * @param <T> 控件类型
-     * @return T类型的视图控件
-     */
-    protected <T extends View> T findAviewById(int viewId) {
-        if (viewId > 0) {
-            return (T) findViewById(viewId);
-        }
-        return null;
-    }
 
-    /**
-     * 在一个容器视图中依据View ID查找子视图
-     * @param containerView 容器View
-     * @param childViewId 子View ID
-     * @param <T>
-     * @return
-     */
-    protected <T extends View> T findAviewInContainer(ViewGroup containerView, int childViewId) {
-        if (containerView == null || childViewId <= 0) {
-            return null;
-        }
-        return (T) containerView.findViewById(childViewId);
-    }
 
     protected void jumpToActivity(Intent startIntent, int requestCode,boolean needReturnResult) {
         if (startIntent != null) {

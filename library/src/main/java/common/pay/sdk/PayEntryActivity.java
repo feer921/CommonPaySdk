@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
@@ -15,6 +14,8 @@ import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import common.pay.sdk.utils.AlipayTaskRunner;
 import common.pay.sdk.utils.CommonPaySdk;
 import static common.pay.sdk.CommonPayConfig.REQ_PAY_RESULT_CODE_ERROR;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * User: fee(1176610771@qq.com)

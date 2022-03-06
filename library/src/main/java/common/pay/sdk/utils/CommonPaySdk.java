@@ -21,7 +21,10 @@ import static common.pay.sdk.CommonPayConfig.WX_APP_ID;
  */
 public class CommonPaySdk {
     private IWXAPI iwxapi;
-    private Context mContext;
+    /**
+     * Application 类型的  Context
+     */
+    private Context mAppContext;
 
     private volatile static CommonPaySdk commonPaySdk;
 
@@ -42,7 +45,7 @@ public class CommonPaySdk {
 
     public CommonPaySdk withContext(Context context) {
         if (context != null) {
-            this.mContext = context.getApplicationContext();
+            this.mAppContext = context.getApplicationContext();
         }
         return this;
     }
@@ -59,11 +62,11 @@ public class CommonPaySdk {
     }
 
     public boolean initWxPayModes(Context context) {
-        if (mContext == null) {
-            mContext = context;
+        if (mAppContext == null) {
+            mAppContext = context;
         }
         if (iwxapi == null) {
-            iwxapi = WXAPIFactory.createWXAPI(mContext, CommonPayConfig.WX_APP_ID, false);
+            iwxapi = WXAPIFactory.createWXAPI(mAppContext, CommonPayConfig.WX_APP_ID, false);
         }
         return iwxapi.registerApp(WX_APP_ID);
     }
@@ -100,6 +103,7 @@ public class CommonPaySdk {
         checkWxSdkApiOk();
         return iwxapi.sendResp(resp);
     }
+
     public IWXAPI getIwxapi() {
         if (iwxapi == null) {
             initWxPayModes();
