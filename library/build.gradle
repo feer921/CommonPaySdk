@@ -36,7 +36,8 @@ dependencies {
 //    implementation(name: 'alipaySdk-15.6.2', ext: 'aar')
 //    implementation files('libs/alipaySdk-20161009.jar') removed by fee 2019-04-24: 更新支付宝SDK
 //    compile files('libs/libammsdk.jar')//
-    api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+    api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:'
+    api 'com.alipay.sdk:alipaysdk-android:15.8.10'
     implementation 'androidx.appcompat:appcompat:1.4.1'//changed to without mta
 //    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     testImplementation 'junit:junit:4.13.2'
