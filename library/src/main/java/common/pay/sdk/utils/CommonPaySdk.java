@@ -1,17 +1,28 @@
 package common.pay.sdk.utils;
 
+import static common.pay.sdk.CommonPayConfig.WX_APP_ID;
+
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.HandlerThread;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import common.pay.sdk.CommonPayConfig;
-import static common.pay.sdk.CommonPayConfig.WX_APP_ID;
+import common.pay.sdk.ComplexPayResp;
 
 /**
  * User: fee(1176610771@qq.com)
@@ -27,6 +38,16 @@ public class CommonPaySdk {
     private Context mAppContext;
 
     private volatile static CommonPaySdk commonPaySdk;
+
+    /**
+     * 支付宝支付任务的执行者
+     */
+    private ExecutorService mTaskExecutorService;
+
+    /**
+     * MutableLiveData类型的 支付结果响应
+     */
+    private MutableLiveData<ComplexPayResp> mPayResultLiveData;
 
     public static CommonPaySdk getMe(){
         if (commonPaySdk == null) {
@@ -49,9 +70,6 @@ public class CommonPaySdk {
         }
         return this;
     }
-//    public CommonPaySdk(Context context) {
-//        this.mContext = context;
-//    }
 
     /**
      * 初始化微信API接口模块
@@ -63,13 +81,14 @@ public class CommonPaySdk {
 
     public boolean initWxPayModes(Context context) {
         if (mAppContext == null) {
-            mAppContext = context;
+            mAppContext = context.getApplicationContext();
         }
         if (iwxapi == null) {
             iwxapi = WXAPIFactory.createWXAPI(mAppContext, CommonPayConfig.WX_APP_ID, false);
         }
         return iwxapi.registerApp(WX_APP_ID);
     }
+
     public boolean handlerWxEvent(Intent intent, IWXAPIEventHandler eventHandler) {
         checkWxSdkApiOk();
         return iwxapi.handleIntent(intent, eventHandler);
@@ -128,12 +147,26 @@ public class CommonPaySdk {
         checkWxSdkApiOk();
         return iwxapi.getWXAppSupportAPI();
     }
+
     private void checkWxSdkApiOk() {
         if (null == iwxapi) {
             throw new IllegalArgumentException("should invoke initWxPayModes() method first");
         }
     }
-    //---------------------------------  down down 支付宝支付业务 down down -----------------------------
+    //--------------------------------- 支付宝支付业务 @start -----------------------------
+
+    /**
+     * 外部提供当前项目的公共的 线程池实例，以复用线程池
+     * @param theExecutorService ExecutorService
+     * @return CommonPaySdk self
+     */
+    public CommonPaySdk withTaskExecutorService(ExecutorService theExecutorService){
+        if (theExecutorService != null) {
+            mTaskExecutorService = theExecutorService;
+        }
+        return this;
+    }
+
     /**
      * 在工作线程中调起阿里支付
      * @param curPayTask
@@ -149,21 +182,69 @@ public class CommonPaySdk {
         if (anyTask == null) {
             return;
         }
-        if (alipayHandlerThread == null) {
-            alipayHandlerThread = new HandlerThread("alipay_task");
-            alipayHandlerThread.start();
+        initTaskExecutor();
+        if (mTaskExecutorService != null) {
+            mTaskExecutorService.execute(anyTask);
         }
-        Handler handlerInThread = new Handler(alipayHandlerThread.getLooper());
-        handlerInThread.post(anyTask);
     }
-    private HandlerThread alipayHandlerThread;
+
+    private void initTaskExecutor(){
+        if (mTaskExecutorService == null) {
+            mTaskExecutorService = Executors.newSingleThreadExecutor();
+        }
+    }
+
     public void endPayModes() {
-        if (alipayHandlerThread != null) {
-            alipayHandlerThread.quit();
+        release();
+    }
+
+    public void release(){
+        if (mTaskExecutorService != null) {
+            mTaskExecutorService.shutdown();
         }
-        //is really need??
-        if (iwxapi != null) {
-//            iwxapi.unregisterApp();
+        mTaskExecutorService = null;
+    }
+
+    /**
+     * 观测/监听 支付响应
+     * @param lifecycleOwner LifecycleOwner
+     * @param observer 支付结果响应的 观察者
+     */
+    public void observePayResp(@NonNull LifecycleOwner lifecycleOwner, @NonNull Observer<ComplexPayResp> observer){
+        if (mPayResultLiveData == null) {
+            mPayResultLiveData = new MutableLiveData<>();
         }
+        mPayResultLiveData.observe(lifecycleOwner,observer);
+    }
+
+    /**
+     * 不再观测/监听 支付结果响应
+     * @param observer Observer<ComplexPayResp>
+     */
+    public void unObservePayResp(@NonNull Observer<ComplexPayResp> observer){
+        if (mPayResultLiveData != null && observer != null) {
+            mPayResultLiveData.removeObserver(observer);
+        }
+    }
+
+    /**
+     * 通用的处理当前的支付响应
+     * @param payMode 当前的支付模式/方式 （微信、支付宝）
+     * @param respCode 当前的响应码
+     * @param paySdkRespCode 当前的支付SDK的实际响应码
+     * @param respMsg 当前的支付响应消息
+     * @return true: 推送了支付响应结果信息；false: 未推送支付结果信息(无支付结果观测者)
+     */
+    public boolean handlePayResp(int payMode,int respCode,String paySdkRespCode,@Nullable String respMsg){
+        if (mPayResultLiveData == null) {
+            return false;
+        }
+        ComplexPayResp payResp = new ComplexPayResp();
+        payResp.payMode = payMode;
+        payResp.respCode = respCode;
+        payResp.paySdkRespCode = paySdkRespCode;
+        payResp.msg = respMsg;
+        mPayResultLiveData.setValue(payResp);
+        return true;
     }
 }
