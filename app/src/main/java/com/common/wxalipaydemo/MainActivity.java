@@ -10,6 +10,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -17,9 +18,11 @@ import com.google.android.material.snackbar.Snackbar;
 
 import common.pay.sdk.BaseActivity;
 import common.pay.sdk.CommonPayConfig;
+import common.pay.sdk.ComplexPayResp;
+import common.pay.sdk.utils.CommonPaySdk;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,Observer<ComplexPayResp> {
 
     TextView tvPayResult;
     @Override
@@ -51,6 +54,7 @@ public class MainActivity extends BaseActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         tvPayResult = findViewById(R.id.tv_show_pay_result);
+        CommonPaySdk.getMe().observePayResp(this, this);
     }
 
     @Override
@@ -116,6 +120,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // 当使用 LiveData的方案来观测支付结果后，旧的使用 onActivityResult()来观测支付结果的方案可以废弃了
         switch (requestCode) {
             case TEST_REQUEST_PAY_CODE:
                 String toastHint = "支付模式:%s,响应码:%s,结果描述:%s";
@@ -145,8 +150,19 @@ public class MainActivity extends BaseActivity
                         "支付SDK的实际响应码：" + payRespCode + "\n" +
                         "结果描述：" + resultDesc;
                 tvPayResult.setText(payResultInfo);
-                toastShow(String.format(toastHint, payModeDesc, payRespCode, resultDesc));
+//                toastShow(String.format(toastHint, payModeDesc, payRespCode, resultDesc));
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CommonPaySdk.getMe().unObservePayResp(this);
+    }
+
+    @Override
+    public void onChanged(ComplexPayResp complexPayResp) {
+        e(null,"--> 支付结果：complexPayResp = ",complexPayResp);
     }
 }

@@ -80,8 +80,11 @@ public class CommonPaySdk {
     }
 
     public boolean initWxPayModes(Context context) {
-        if (mAppContext == null) {
+        if (mAppContext == null && context != null) {
             mAppContext = context.getApplicationContext();
+        }
+        if (mAppContext == null) {
+            return false;
         }
         if (iwxapi == null) {
             iwxapi = WXAPIFactory.createWXAPI(mAppContext, CommonPayConfig.WX_APP_ID, false);

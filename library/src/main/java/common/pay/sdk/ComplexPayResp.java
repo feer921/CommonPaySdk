@@ -37,5 +37,13 @@ public class ComplexPayResp {
      */
     public String paySdkRespCode;
 
-
+    @Override
+    public String toString() {
+        return "ComplexPayResp{" +
+                "payMode=" + payMode +
+                ", msg='" + msg + '\'' +
+                ", respCode=" + respCode +
+                ", paySdkRespCode='" + paySdkRespCode + '\'' +
+                '}';
+    }
 }
