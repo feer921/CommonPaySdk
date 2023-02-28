@@ -1,4 +1,9 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+//    id 'maven-publish'
+//    id 'signing'
+}
+apply from:'maven_publish.gradle' //依赖 maven 发布脚本
 
 android {
     compileSdkVersion compileSdkVer
@@ -43,36 +48,17 @@ dependencies {
 //    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     testImplementation 'junit:junit:4.13.2'
     implementation  "androidx.activity:activity:1.4.0"
-//    implementation 'cn.pedant.sweetalert:library:1.3'//参见:https://github.com/pedant/sweet-alert-dialog
 }
 
 //---------------------------------------------
 
-// 指定编码
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
-
-// 打包源码
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-//task javadoc(type: Javadoc) {
-//    failOnError  false
-//    source = android.sourceSets.main.java.sourceFiles
-//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-//    classpath += configurations.compile
+//// 指定编码
+//tasks.withType(JavaCompile) {
+//    options.encoding = "UTF-8"
 //}
-
-// 制作文档(Javadoc)
-//task javadocJar(type: Jar, dependsOn: javadoc) {
-//    classifier = 'javadoc'
-//    from javadoc.destinationDir
-//}
-
-//artifacts {
-//    archives sourcesJar
-//    archives javadocJar
+//
+//// 打包源码
+//task sourcesJar(type: Jar) {
+//    from android.sourceSets.main.java.srcDirs
+//    classifier = 'sources'
 //}

@@ -198,6 +198,9 @@ public class CommonPaySdk {
     }
 
     public void endPayModes() {
+        if (mPayResultLiveData != null) {
+            mPayResultLiveData.setValue(null);
+        }
         release();
     }
 
