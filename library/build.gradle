@@ -48,6 +48,7 @@ dependencies {
 //    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     testImplementation 'junit:junit:4.13.2'
     implementation  "androidx.activity:activity:1.4.0"
+//    implementation 'org.gradle.plugins:signing:7.5'
 }
 
 //---------------------------------------------

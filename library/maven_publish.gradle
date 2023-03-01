@@ -46,6 +46,7 @@ def MAVEN_USER_NAME = getProperty(p4Secret,'MAVEN_USERNAME')
 def MAVEN_PW = getProperty(p4Secret,'MAVEN_PASSWORD')
 def SIGN_KEYID = getProperty(p4Secret,'signing.keyId')
 def SIGN_PW = getProperty(p4Secret,'signing.password')
+def SIGN_SECRET_KEYRING_FILE = getProperty(p4Secret,'signing.secretKeyRingFile')
 private def getProperty(Properties p, String key){
     return p.getProperty(key)
 }
@@ -57,6 +58,10 @@ publishing {
             groupId GROUP_ID //开通maven central时候定义的
             artifactId ARTIFACT_ID //资源名称
             version VERSION_NAME //版本名称
+            project.ext['signing.keyId'] = SIGN_KEYID
+            project.ext['signing.password'] = SIGN_PW
+            project.ext['signing.secretKeyRingFile'] = SIGN_SECRET_KEYRING_FILE
+
             pom {
                 name = POM_NAME
                 description = POM_DESCRIPTION
@@ -113,7 +118,8 @@ publishing {
 }
 
 signing {
-    useInMemoryPgpKeys(SIGN_KEYID, SIGN_PW)
+    sign project.publishing.publications
+//    useInMemoryPgpKeys(SIGN_KEYID, SIGN_PW)
 //    sign stuffZip
 }
 
