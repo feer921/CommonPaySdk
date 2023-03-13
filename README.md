@@ -1,7 +1,7 @@
 # 再版说明
 由于想把本库发布到【[jitpack](https://jitpack.io/)】 上去以方便使用者直接可以进行gradle依赖，但想要能放上【jitpack】上，需要一个完整的项目才能成功，可参考教程【[将自己写的库发布到JitPack](http://blog.csdn.net/chendong_/article/details/52196454)】,而之前并没有考虑到这一点，库【[CommonPayLib](https://github.com/feer921/CommonPayLib)】与Demo工程【[WxAlipayDemo](https://github.com/feer921/WxAlipayDemo)】是分开写的，但是不能单独将一个Android库发布到JitPack上，故打算重新开一个完整项目，并与其他开源库一样，直接在项目中通用支付库以library的形式存在，这样才能发布到【jitpack】上去。
 
-# 依赖步骤 
+# ~~依赖步骤(方案已旧)~~ 
 因为本库已经发布到JitPack上去了，所以APP的使用可以直接进行gradle依赖
 
 步骤：
@@ -30,7 +30,31 @@
 > 
 > }
 
-再更改了*.gradle文件时 AndroidStudio会提示需要同步(编译)，如果顺利的话，本库则应该会依赖成功。
+# 依赖步骤(mavenCentral版本)
+
+项目的根目录下的 **build.gradle** 中添加 maven仓库(由于Jcenter已废，新建的项目基本都有maven的默认仓库)
+
+```groovy
+buildscript {
+    
+    repositories {
+        google()
+        mavenCentral() //增加 maven仓库
+    }
+}
+```
+
+再在 **App** 模块的目录下的 **build.gradle** 文件中增加对本组件库的依赖
+
+```groovy
+dependencies {
+  implementation 'io.github.feer921:CommonPaySdk:2.1' //该版本支持查看源码和注释了
+}
+```
+
+
+
+在更改了*.gradle文件时 AndroidStudio会提示需要同步(编译)，如果顺利的话，本库则应该会依赖成功。
 
 # 使用方法及步骤
 本库的核心类为【[PayEntryActivity](https://github.com/feer921/CommonPaySdk/blob/master/library/src/main/java/common/pay/sdk/PayEntryActivity.java)】，之所以说是微信与支付宝支付的通用库，其调起微信/支付宝的以及接收支付的结果响应逻辑全在这个类里面，一个类通用两种支付方式，看过别人写支付功能时，微信支付的功能就按照官方的Demo写一个WxPayEntryActivity，支付宝的就另写一个逻辑，这样会造成需要分开来处理，不太方便，而且如果好几个项目都要集成支付功能，每个项目里面都要写一样的代码，维护也不爽，因而很有必要写这样一个通用库工程到处可以使用。
@@ -453,7 +477,6 @@ API方法在【PayEntryActivity】中，为全局静态方法，有三种方式�
 # 番外
 如果本支付通用库有幸被你使用了，顺便说一句，那么微信SDK中的微信分享等功能也可以使用，同理，你有APP的包名路径下的【wxapi】目录下写一个【WXEntryActivity】即可，具体逻辑就自己写吧。
 感谢各位的使用，欢迎提交【issue】【建议】【指正】【批评】，谢谢！
-
 
 
 

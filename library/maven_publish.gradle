@@ -1,13 +1,6 @@
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
-//apply plugin: 'java'
 
-
-
-//java {
-//    withJavadocJar()
-//    withSourcesJar()
-//}
 
 //加载配置参数
 Properties p = new Properties()
@@ -97,11 +90,12 @@ publishing {
                     url = POM_ISSUE_MANAGEMENT_URL
                 }
             }
-            artifact  './build/outputs/aar/library-debug.aar'
-
 //            artifact generateSourcesJar //需要上传的source jar
 //            artifact generateJavadoc //需要上传的java doc
 //            artifact makeJar //需要上传的资源jar路径或者是aar路径，这边可以填写一个生成jar的task，如makeJar方法就是一个生成jar的task
+            afterEvaluate {
+                from components.release
+            }
         }
     }
     repositories {
@@ -122,9 +116,3 @@ signing {
 //    useInMemoryPgpKeys(SIGN_KEYID, SIGN_PW)
 //    sign stuffZip
 }
-
-//javadoc {
-//    if(JavaVersion.current().isJava9Compatible()) {
-//        options.addBooleanOption('html5', true)
-//    }
-//}

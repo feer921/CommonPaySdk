@@ -31,6 +31,12 @@ android {
         // ... jcenter() 等其他仓库
     }
     namespace 'common.pay.sdk'
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar() //带源码
+        }
+    }
 }
 
 dependencies {
@@ -50,16 +56,3 @@ dependencies {
     implementation  "androidx.activity:activity:1.4.0"
 //    implementation 'org.gradle.plugins:signing:7.5'
 }
-
-//---------------------------------------------
-
-//// 指定编码
-//tasks.withType(JavaCompile) {
-//    options.encoding = "UTF-8"
-//}
-//
-//// 打包源码
-//task sourcesJar(type: Jar) {
-//    from android.sourceSets.main.java.srcDirs
-//    classifier = 'sources'
-//}
