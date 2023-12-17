@@ -253,4 +253,10 @@ public class CommonPaySdk {
         mPayResultLiveData.setValue(payResp);
         return true;
     }
+
+    public void resetResultLiveData(){
+        if (mPayResultLiveData != null) {
+            mPayResultLiveData.setValue(null);
+        }
+    }
 }

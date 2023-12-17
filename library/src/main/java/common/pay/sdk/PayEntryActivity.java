@@ -32,6 +32,11 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
 
     private boolean isAliPayOrder,isWxPayOrder;
     protected CommonPaySdk paySdk;
+    /**
+     * 在本页面关闭/结束　时是否需要 让支付模块　释放
+     * def = true
+     */
+    protected boolean isNeedReleasePayModeAtFinish = true;
 
     /**
      * 注：该启动支付的方法目前只支持(阿里支付宝支付)
@@ -59,6 +64,7 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
         startIntent.putExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO, curPrePayOrderInfo);
         startActivity.startActivityForResult(startIntent, requestCode);
     }
+
     /**
      * 该方法供在Fragment界面里跳转支付的情况，这样就能直接在Fragment的onActivityResult()方法中直接拿到支付结果并处理了
      * @param fragment 当前碎片界面
@@ -74,6 +80,7 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
         startIntent.putExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO, curPrePayOrderInfo);
         fragment.startActivityForResult(startIntent, requestCode);
     }
+
     /**
      * 为了解除微信支付SDK限制集成微信支付的APP内一定要在包名内下建立一个wxapi包再在该包下建立WxPayEntryActivity类才能正常回调出响应
      * 所以本库改为此方法来调起支付
@@ -108,6 +115,7 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
         startIntent.putExtra(CommonPayConfig.INTENT_KEY_CUR_PAY_ORDER_INFO, curPrePayOrderInfo);
         return startIntent;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         LIFE_CIRCLE_DEBUG = true;
@@ -384,6 +392,8 @@ public class PayEntryActivity extends BaseActivity implements IWXAPIEventHandler
     @Override
     public void finish() {
         super.finish();
-        paySdk.endPayModes();
+        if (isNeedReleasePayModeAtFinish) {
+            paySdk.endPayModes();
+        }
     }
 }

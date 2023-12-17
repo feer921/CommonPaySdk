@@ -6,7 +6,8 @@ plugins {
 apply from:'maven_publish.gradle' //依赖 maven 发布脚本
 
 android {
-    compileSdkVersion compileSdkVer
+    compileSdk compileSdkVer
+//    compileSdkVersion compileSdkVer
     
     defaultConfig {
         minSdkVersion 21
@@ -48,11 +49,14 @@ dependencies {
 //    implementation(name: 'alipaySdk-15.6.2', ext: 'aar')
 //    implementation files('libs/alipaySdk-20161009.jar') removed by fee 2019-04-24: 更新支付宝SDK
 //    compile files('libs/libammsdk.jar')//
-    api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:6.8.0'
-    api 'com.alipay.sdk:alipaysdk-android:15.8.11'
-    implementation 'androidx.appcompat:appcompat:1.4.1'//changed to without mta
-//    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+//    api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:6.8.0'//2021-09-13
+
+    api 'com.tencent.mm.opensdk:wechat-sdk-android:6.8.24'//2023-04-06
+
+//    api 'com.alipay.sdk:alipaysdk-android:15.8.11'
+    api 'com.alipay.sdk:alipaysdk-android:15.8.17'//2023-11-03
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     testImplementation 'junit:junit:4.13.2'
-    implementation  "androidx.activity:activity:1.4.0"
+//    implementation  "androidx.activity:activity:1.8.0" appcompat 库已有依赖
 //    implementation 'org.gradle.plugins:signing:7.5'
 }
